@@ -1,6 +1,7 @@
 package com.smartcampus.smartcampusapi.resource;
 
 import com.smartcampus.smartcampusapi.data.DataStore;
+import com.smartcampus.smartcampusapi.model.Room;
 import com.smartcampus.smartcampusapi.model.Sensor;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -15,7 +16,26 @@ import java.util.Map;
 public class SensorResource {
 
     private final DataStore store = DataStore.getInstance();
+    @DELETE
+    @Path("/{sensorId}")
+    public Response deleteSensor(@PathParam("sensorId") String sensorId) {
+        Sensor sensor = store.getSensors().get(sensorId);
 
+        if (sensor == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\":\"Sensor not found: " + sensorId + "\"}")
+                    .build();
+        }
+
+        // Remove sensor from its room's sensorIds list
+        Room room = store.getRooms().get(sensor.getRoomId());
+        if (room != null) {
+            room.getSensorIds().remove(sensor.getId());
+        }
+
+        store.getSensors().remove(sensorId);
+        return Response.noContent().build();
+    }
     // GET /api/v1/sensors — list all sensors, optional ?type= filter
     @GET
     public Response getAllSensors(@QueryParam("type") String type) {
