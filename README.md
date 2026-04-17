@@ -172,8 +172,6 @@ curl -X GET "http://localhost:8080/SmartCampusAPI/api/v1/sensors?type=Occupancy"
 
 ---
 
-## Sample curl Commands
-
 ### Part 1 — Service Architecture & Setup
 
 **Q1.1: What is the default lifecycle of a JAX-RS Resource class? How does this impact in-memory data management?**
